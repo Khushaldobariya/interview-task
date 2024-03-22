@@ -2,122 +2,122 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { openDialog } from "../store/dialog/dialogSlice";
 import CreateDialog from "./CreateDialog";
-import { deleteProduct, getProduct } from "../store/Products/ProductSlice";
+import { getEmployee } from "../store/Employee/EmployeeSlice";
+import FilterDialog from "./FilterDialog";
+import dayjs from "dayjs";
 
 const Home = () => {
   const [data, setData] = useState([]);
-  const product = useSelector((state) => state.product.product);
+  const emp = useSelector((state) => state.employee.employee);
+  const [type, setType] = useState("create");
+
 
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getProduct());
+   
+    dispatch(getEmployee());
   }, []);
 
   useEffect(() => {
-    setData(product);
-  }, [product]);
-  const handelClickOpen = () => {
+    setData(emp);
+  }, [emp]);
+
+  const handelClickOpen = (data) => {
+    setType(data)
     dispatch(openDialog());
   };
   const handelClickEdit = (data) => {
-    console.log("Edit icon clicked");
     dispatch(openDialog(data));
   };
 
   const handelDelete = (id) => {
-  dispatch(deleteProduct(id))
+    dispatch(getEmployee(id));
   };
 
   return (
     <>
-      <div>
-        <div className="d-flex justify-content-end mt-3 px-4">
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={handelClickOpen}
-          >
-            Create
-          </button>
-        </div>
-        <table className="table table-striped my-5">
-          <thead className="text-center">
-            <tr>
-              <th>Product Name</th>
-              <th>Vendor Name</th>
-              <th>Variants</th>
+      <div className="p-4">
+        <div className="card border-0  my-4 border rounded">
+          <div className="card-body box-shadow">
+            <div className="card-title">
+              <div className="d-flex align-itmes-center  justify-content-between px-4 py-2">
+                <div className="fw-bold ">Employee Id</div>
+                <div>
+                  <button
+                    type="button"
+                    className="btn btn-info me-2 text-white"
+                    onClick={() => {
+                      handelClickOpen("filter");
+                    }}
+                  >
+                    filter
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-info text-white"
+                    onClick={() => {
+                      handelClickOpen("create");
+                    }}
+                  >
+                    Create
+                  </button>
+                </div>
+              </div>
+            </div>
 
-              <th>Vendor Contact Number</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody className="text-center">
-            {data?.map((product, index) => (
-                    <tr key={index}>
-                    <td>{product.productName}</td>
+            <table className="table table-striped ">
+              <thead className="text-center">
+                <tr>
+                  <th>Emp Id</th>
+                  <th>Emp Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>DOB</th>
+                  <th>Address</th>
+                  <th>Edit</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody className="text-center">
+                {data?.map((emp, index) => (
+                  <tr key={index}>
+                    <td>{emp.id}</td>
+                    <td>{emp.empName}</td>
+                    <td>{emp.email}</td>
+                    <td>{emp.phone}</td>
+                    <td>{ dayjs(emp.DOB).format("DD/MM/YYYY")}</td>
+                    <td>{emp.adderss}</td>
                     <td>
-                      {product.vendorName.map((vendor, vendorIndex) => (
-                        <span key={vendorIndex}>
-                          {vendor.name}
-                          {vendorIndex !== product.vendorName.length - 1 && ", "}
-                        </span>
-                      ))}
+                      <button
+                        className="btn btn-info text-white"
+                        type="button"
+                        onClick={() => handelClickEdit(emp)}
+                      >
+                        <i className="fa-solid fa-pencil " /> Edit
+                      </button>
                     </td>
                     <td>
-                      {product.vendorName.map((vendor, vendorIndex) => (
-                        <div key={vendorIndex}>
-                          {vendor.variants.map((variant, variantIndex) => (
-                            <span key={variantIndex}>
-                              {variant.name}
-                              {variantIndex !== vendor.variants.length - 1 && ", "}
-                            </span>
-                          ))}
-                          {vendorIndex !== product.vendorName.length - 1 && <br />}
-                        </div>
-                      ))}
-                    </td>
-                    <td>
-                      {product.vendorName.map((vendor, vendorIndex) => (
-                        <div key={vendorIndex}>
-                          {vendor.variants.map((variant, variantIndex) => (
-                            <span key={variantIndex}>
-                              {variant.number}
-                              {variantIndex !== vendor.variants.length - 1 && ", "}
-                            </span>
-                          ))}
-                          {vendorIndex !== product.vendorName.length - 1 && <br />}
-                        </div>
-                      ))}
-                    </td>
-                    <td>
-                      <span className="mx-2">
-                        <button
-                          className="btn btn-info"
-                          type="button"
-                          onClick={() => handelClickEdit(product)}
-                        >
-                          <i className="fa-solid fa-pencil text-dark" />
-                        </button>
-                      </span>
-                      <span>
-                        <button
-                          className="btn btn-danger"
-                          type="button"
-                          onClick={() => handelDelete(product.id)}
-                        >
-                          <i className="fa-solid fa-trash-can text-dark" />
-                        </button>
-                      </span>
+                      <button
+                        className="btn btn-danger text-white"
+                        type="button"
+                        onClick={() => handelDelete(emp.id)}
+                      >
+                        <i className="fa-solid fa-trash-can " /> Delete
+                      </button>
                     </td>
                   </tr>
-            
-            ))}
-          </tbody>
-        </table>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-      <CreateDialog />
+      {
+        type === "create"?
+        <CreateDialog />:<FilterDialog />
+      }
     </>
   );
 };

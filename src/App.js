@@ -9,15 +9,8 @@ import Header from "./Component/Header";
 function App() {
   return (
     <>
-     <div>
-      <Header />
-      <div className="d-flex">
-        <Sidebar />
-        <div className="container">
-          <Home />
-        </div>
-      </div>
-    </div>
+               <Home />
+
     </>
   );
 }

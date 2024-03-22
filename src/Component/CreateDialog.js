@@ -9,50 +9,33 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Formik, Form, Field, ErrorMessage, FieldArray } from "formik";
 import * as Yup from "yup";
-import { createProduct, editProduct } from "../store/Products/ProductSlice";
+import { createEmployee } from "../store/Employee/EmployeeSlice";
 
 const validationSchema = Yup.object().shape({
-  productName: Yup.string().required("Name is required"),
-  description: Yup.string().required("Description is required"),
-  // vendorName: Yup.string().required("Vendor Name is required"),
+  empName: Yup.string().required("Name is required"),
+  email: Yup.string().required("email is required"),
+  phone: Yup.string().required("phone is required"),
+  adderss: Yup.string().required("adderss is required"),
+  DOB: Yup.string().required("DOB is required"),
 });
 
 const CreateDialog = ({ initialValues, onSubmit }) => {
   const { isOpen, data } = useSelector((state) => state.dialog);
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
-
+  const fullScreen = useMediaQuery(theme.breakpoints.down("lg"));
+  console.log("fullScreen", fullScreen);
   const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [vendor, setVendor] = useState([
-    { name: "", is_main: false, variants: [{ name: "", number: 0 }] },
-  ]);
-  const [varient, setVarient] = useState([{ name: "", number: 0 }]);
+  const [email, setemail] = useState("");
 
-  const [vendorMain, setVandorMain] = useState(false);
-  const [countOfVariant, setCountOfVariant] = useState(0);
-
-  const [vandorsData, setVandorsData] = useState([]);
   const dispatch = useDispatch();
 
-  console.log("data", data);
   useEffect(() => {
     if (data) {
-      setVandorsData(data);
-      setVendor(data?.vendorName);
-      setName(data?.productName);
-      setDescription(data?.description);
-      setVandorMain(data?.is_main);
-      setVarient(data?.variants);
-      setCountOfVariant(data?.variants?.length);
+      setName(data?.empName);
+      setemail(data?.email);
     } else {
-      setVendor([
-        { name: "", is_main: false, variants: [{ name: "", number: 0 }] },
-      ]);
       setName("");
-      setDescription("");
-      setVandorMain(false);
-      setVarient([{ name: "", number: 0 }]);
+      setemail("");
     }
   }, [data]);
 
@@ -60,213 +43,153 @@ const CreateDialog = ({ initialValues, onSubmit }) => {
     dispatch(closeDialog());
   };
 
-  const handleAddVendors = () => {
-    if (vandorsData.length === 0) {
-      setVandorsData([
-        ...vandorsData,
-        {
-          vendor: [{ name: "", is_main: false }],
-          vendorMain: false,
-          variants: [{ name: "", number: 0 }],
-        },
-      ]);
-    } else {
-      setVandorsData([
-        ...vandorsData,
-        {
-          vendor: [{ name: "", is_main: false }],
-          vendorMain: false,
-          variants: [{ name: "", number: 0 }],
-        },
-      ]);
-    }
-  };
-
   return (
-    <Dialog open={isOpen} onClose={handleClose} fullScreen={fullScreen}>
-      <DialogTitle> {data ? "Edit Vandors" : "Add vendores"}</DialogTitle>
+    <Dialog
+      open={isOpen}
+      onClose={handleClose}
+      fullScreen={fullScreen}
+      maxWidth={"lg"}
+      fullWidth
+    >
+      <DialogTitle> Add Emplyolee</DialogTitle>
       <DialogContent>
         <Formik
           initialValues={{
-            productName: data && data.productName ? data.productName : "",
-            description: data && data.description ? data.description : "",
-            vendorName:
-              data && data.vendorName
-                ? data.vendorName
-                : [
-                    {
-                      name: "",
-                      is_main: false,
-                      variants: [{ name: "", number: 0 }],
-                    },
-                  ],
+            empName: data && data.empName ? data.empName : "",
+            email: data && data.email ? data.email : "",
+            phone: data && data.phone ? data.phone : "",
+            DOB: data && data.DOB ?data.DOB : "",
+            adderss: data && data.adderss ? data.adderss : "",
+          
           }}
-          onSubmit={(values, actions) => {
-            console.log("value", values);
+          onSubmit={(values, actions) => {  
+            console.log("values", values);
+            dispatch(createEmployee(values));
 
-            if (data) {
-              dispatch(editProduct({values,id:data.id}));
-            } else {
-              dispatch(createProduct(values));
-            }
             handleClose();
           }}
           validationSchema={validationSchema}
         >
           {({ handleSubmit, handleChange, values, errors }) => (
             <Form onSubmit={handleSubmit}>
-              <div className="row">
-                <div className="col-6">
-                  <label className="form-label" htmlFor="Name">
-                    Name
-                  </label>
-                  <Field
-                    type="text"
-                    id="name"
-                    name="productName"
-                    className="form-control"
-                    placeholder="Name"
-                    onChange={handleChange}
-                  />
-                  <ErrorMessage
-                    name="productName"
-                    component="div"
-                    className="text-danger"
-                  />
-                </div>
-                <div className="col-6">
-                  <label className="form-label" htmlFor="description">
-                    Description
-                  </label>
-                  <Field
-                    type="text"
-                    id="description"
-                    name="description"
-                    className="form-control"
-                    placeholder="Description"
-                  />
-                  <ErrorMessage
-                    name="description"
-                    component="div"
-                    className="text-danger"
-                  />
+              <div>
+                <label className="form-label" htmlFor="Name">
+                  Employee Name
+                </label>
+                <div className="row d-flex align-items-center">
+                  <div className="col-6">
+                    <Field
+                      type="text"
+                      id="name"
+                      name="empName"
+                      className="form-control"
+                      placeholder="Name"
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="col-6">
+                    <ErrorMessage
+                      name="empName"
+                      component="div"
+                      className="text-danger"
+                    />
+                  </div>
                 </div>
               </div>
               <div>
-                <div className="row align-itmes-centr">
-                  <FieldArray name="vendorName">
-                    {({ push, form }) => (
-                      <>
-                        {form?.values?.vendorName?.map(
-                          (vendor, vendorIndex) => (
-                            <div key={vendorIndex}>
-                              <div className="row align-items-center">
-                                <div className="col-8">
-                                  <label
-                                    className="form-label"
-                                    htmlFor={`vendorName${vendorIndex}`}
-                                  >
-                                    Vendor Name
-                                  </label>
-                                  <Field
-                                    type="text"
-                                    id={`vendorName${vendorIndex}`}
-                                    name={`vendorName[${vendorIndex}].name`}
-                                    className="form-control"
-                                    placeholder="Vendor Name"
-                                  />
-                                </div>
-                                <div className="col-4 mt-3">
-                                  <label
-                                    className="form-check-label"
-                                    htmlFor={`vendorName[${vendorIndex}].is_main`}
-                                  >
-                                    <Field
-                                      type="checkbox"
-                                      id={`vendorName[${vendorIndex}].is_main`}
-                                      name={`vendorName[${vendorIndex}].is_main`}
-                                      className="form-check-input mx-2"
-                                    />
-                                    Is Main
-                                  </label>
-                                </div>
-                              </div>
-                              <div className="row">
-                                <label className="form-label">
-                                  Variant Details
-                                </label>
-                                <FieldArray
-                                  name={`vendorName[${vendorIndex}].variants`}
-                                >
-                                  {({ push, form }) => (
-                                    <>
-                                      {form?.values?.vendorName[
-                                        vendorIndex
-                                      ]?.variants.map(
-                                        (variant, variantIndex) => (
-                                          <div
-                                            className="col-8"
-                                            key={variantIndex}
-                                          >
-                                            <div className="row">
-                                              <div className="col-6">
-                                                <Field
-                                                  type="text"
-                                                  name={`vendorName[${vendorIndex}].variants[${variantIndex}].name`}
-                                                  className="form-control"
-                                                  placeholder="Name"
-                                                />
-                                              </div>
-                                              <div className="col-6">
-                                                <Field
-                                                  type="number"
-                                                  name={`vendorName[${vendorIndex}].variants[${variantIndex}].number`}
-                                                  min={0}
-                                                  className="form-control"
-                                                  placeholder="Number"
-                                                />
-                                              </div>
-                                            </div>
-                                          </div>
-                                        )
-                                      )}
+                <label className="form-label" htmlFor="email">
+                  email
+                </label>
+                <div className="row d-flex align-items-center">
+                  <div className="col-6">
+                    <Field
+                      type="text"
+                      id="email"
+                      name="email"
+                      className="form-control"
+                      placeholder="email"
+                    />
+                  </div>
+                  <div className="col-6">
+                    <ErrorMessage
+                      name="email"
+                      component="div"
+                      className="text-danger"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label className="form-label" htmlFor="phone">
+                  phone
+                </label>
 
-                                      <div className="col-4">
-                                        <button
-                                          type="button"
-                                          className="btn btn-primary"
-                                          onClick={() =>
-                                            push({ name: "", number: 0 })
-                                          }
-                                        >
-                                          Add Variant
-                                        </button>
-                                      </div>
-                                    </>
-                                  )}
-                                </FieldArray>
-                              </div>
-                            </div>
-                          )
-                        )}
-                        <div className="col-4">
-                          <button
-                            type="button"
-                            className="btn btn-warning my-2 text-center"
-                            onClick={() =>
-                              push({
-                                name: "",
-                                is_main: false,
-                                variants: [{ name: "", number: 0 }],
-                              })
-                            }
-                          >
-                            Add Vendor
-                          </button>
-                        </div>
-                      </>
-                    )}
-                  </FieldArray>
+                <div className="row d-flex align-items-center">
+                  <div className="col-6">
+                    <Field
+                      min="0"
+                      type="number"
+                      id="phone"
+                      name="phone"
+                      className="form-control"
+                      placeholder="Enter Employee Phone.."
+                    />
+                  </div>
+                  <div className="col-6">
+                    <ErrorMessage
+                      name="phone"
+                      component="div"
+                      className="text-danger"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label className="form-label" htmlFor="phone">
+                  DOB
+                </label>
+
+                <div className="row d-flex align-items-center">
+                  <div className="col-6">
+                    <Field
+                      type="date"
+                      id="DOB"
+                      name="DOB"
+                      className="form-control"
+                      placeholder="Enter Employee DOB.."
+                    />
+                  </div>
+                  <div className="col-6">
+                    <ErrorMessage
+                      name="DOB"
+                      component="div"
+                      className="text-danger"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label className="form-label" htmlFor="phone">
+                  address
+                </label>
+
+                <div className="row d-flex align-items-center">
+                  <div className="col-6">
+                    <Field
+                      type="text"
+                      id="adderss"
+                      name="adderss"
+                      className="form-control"
+                      placeholder="Enter Employee Address.."
+                    />
+                  </div>
+                  <div className="col-6">
+                    <ErrorMessage
+                      name="adderss"
+                      component="div"
+                      className="text-danger"
+                    />
+                  </div>
                 </div>
               </div>
 

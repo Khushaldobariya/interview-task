@@ -1,10 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 
 import dialogReducer from "./dialog/dialogSlice";
-import productReducer from "./Products/ProductSlice";
+import EmployeeReducer from "./Employee/EmployeeSlice";
 export const store = configureStore({
   reducer: {
-    product: productReducer,
+    employee: EmployeeReducer,
     dialog: dialogReducer,
   },
 });
