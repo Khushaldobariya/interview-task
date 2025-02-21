@@ -24,7 +24,12 @@ interface SearchCriteria {
   specialty: string;
 }
 
-const AssignInterview = () => {
+interface StepComponentProps {
+  onNext: () => void
+}
+
+
+const AssignInterview = ({ onNext }: StepComponentProps) => {
   const [formData, setFormData] = useState<FormData>({
     advertisement: "",
     candidateId: "",
@@ -66,7 +71,7 @@ const AssignInterview = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
+
       <div className="space-y-6">
         <h1 className="text-2xl font-bold text-gray-900 capitalize">
           Assign Interview
@@ -167,7 +172,7 @@ const AssignInterview = () => {
           </div>
 
           {/* Search Button */}
-          <div>
+          <div className="flex gap-2">
             <button
               type="button"
               onClick={handleSearch}
@@ -179,9 +184,9 @@ const AssignInterview = () => {
             <button
               type="button"
               onClick={resetAll}
-              className="bg-purple-500 text-white px-4 py-2 rounded"
+              className="bg-red-500 text-white px-4 py-2 rounded"
             >
-              Search
+              Reset
             </button>
           </div>
         </form>
@@ -190,8 +195,17 @@ const AssignInterview = () => {
         <div>
           <CandidateTable searchCriteria={searchCriteria} />
         </div>
+        <div className="flex justify-end">
+          <button
+          onClick={onNext}
+            type="button"
+            className="py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+       Assign Interview
+          </button>
+        </div>
       </div>
-    </div>
+
   );
 };
 

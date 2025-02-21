@@ -5,6 +5,11 @@ import { Select, SelectItem } from "@heroui/select";
 import { Button } from "@heroui/button";
 import { ADVERTISEMENT } from "../../constant";
 
+interface StepComponentProps {
+  onNext: () => void
+}
+
+
 interface FormData {
   advertisement: string;
   name: string;
@@ -27,7 +32,7 @@ interface FormErrors {
   hasDocumentVerification?: string;
 }
 
-export default function AddInterviewForm() {
+export default function AddInterviewForm({ onNext }: StepComponentProps) {
   const [formData, setFormData] = useState<FormData>({
     advertisement: "",
     name: "",
@@ -98,7 +103,7 @@ export default function AddInterviewForm() {
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     if (validateForm()) {
-      console.log(formData);
+      onNext(); 
     }
   }
 
@@ -260,7 +265,9 @@ export default function AddInterviewForm() {
 
         <div className="flex justify-end">
           <Button
-            type="submit"
+          type="submit" 
+    
+          
             className="py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
             Create Interview
